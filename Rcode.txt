@@ -1,0 +1,167 @@
+chineseData = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/review 3/biz-NY-chinese.csv", header=T);
+frenchData = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/review 3/biz-NY-french.csv", header=T);
+myCombineData = merge(chineseData, frenchData);
+indpakData = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/review 3/biz-NY-indpak-1.csv");
+myCombineData1 = rbind(indpakData, myCombineData);
+italianData = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/review 3/biz-NY-italian.csv");
+myCombineData2 = rbind(italianData, myCombineData1);
+nrow(myCombineData2)
+japaneseData = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/review 3/biz-NY-Japanese.csv");
+myCombineData3 = rbind(japaneseData, myCombineData2);
+nrow(myCombineData3)
+koreanData = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/review 3/biz-NY-korean.csv");
+myCombineData4 = rbind(koreanData, myCombineData3);
+nrow(myCombineData4)
+mexicanData = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/review 3/biz-NY-mexican.csv");
+myCombineData5 = rbind(mexicanData, myCombineData4);
+nrow(myCombineData5)
+
+newamericanData = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/review 3/biz-NY-newamerican.csv");
+myCombineData6 = rbind(newamericanData, myCombineData5);
+nrow(myCombineData6);
+
+tradamericanData = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/review 3/biz-NY-tradamerican.csv");
+reviewCombineFinal = rbind(myCombineData6, tradamericanData);
+nrow(reviewCombineFinal)
+
+japaneseBusiness = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/data/biz-NY-chinese.csv");
+frenchBusiness = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/data/biz-NY-french.csv");
+myCombination1 = rbind(japaneseBusiness, frenchBusiness);
+nrow(myCombination1)
+
+
+indpakBusiness = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/data/biz-NY-indpak.csv");
+myCombination2 = rbind(indpakBusiness, myCombination1);
+nrow(myCombination2)
+
+italianBusiness = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/data/biz-NY-italian.csv");
+myCombination3 = rbind(italianBusiness, myCombination2);
+japaneseBusiness = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/data/biz-NY-japanese.csv");
+myCombination4 = rbind(japaneseBusiness,myCombination3);
+koreanBusiness = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/data/biz-NY-korean.csv");
+myCombination5 = rbind(myCombination4, koreanBusiness);
+mexicanBusiness = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/data/biz-NY-mexican.csv");
+myCombination6 = rbind(mexicanBusiness,myCombination5);
+newamericanBusiness = read.csv("/Users/pengxuechan/Desktop/CCProject/Data/data/biz-NY-newamerican.csv");
+myCombination7 = rbind(newamericanBusiness, myCombination6);
+busCombineFinal = myCombination7;
+nrow(busCombineFinal);
+
+//**************End of the separate data merge ***************************
+
+testCombine = merge(reviewCombineFinal, busCombineFinal, by.x=c("bizID"), by.y=c("id"));
+nrow(testCombine)
+
+//**************End of combine all the tables ****************************
+testCombine$ratingTypeCate = cut(testCombine$rating.x, c(0,2,5), labels=c(0:1));
+head(testCombine)
+
+finalFiltered2 = testCombine[,-11]
+head(finalFiltered2)
+
+//*****************frequency plot****************************
+library(MASS)
+rateType = finalFiltered2$ratingTypeCate;
+freqTable = table(finalFiltered2$ratingTypeCate);
+barplot(freqTable)
+
+reviewCountFreq = table(finalFiltered2$review_count);
+barplot(reviewCountFreq)
+
+glm.logistic = glm(ratingTypeCate~userful + funny + cool + rating.y + review_count, data = finalFiltered2, family=binomial)
+summary(glm.logistic)
+
+system.time(glm(ratingTypeCate~userful + funny + cool + rating.y + review_count, data = finalFiltered2, family=binomial))
+
+//****************export data*******************************
+
+newExportData2 = newExportData[-1]
+newExportData3 = newExportData2[-1]
+head(newExportData3)
+finalExport = newExportData3[-5]
+write.table(finalExport, file="yelpTable.csv")
+//**********Linear Discriminant Analysis*******************
+library(ISLR)
+names(finalExport)
+dim(finalExport)
+summary(finalExport)
+
+
+library(MASS)
+lda.fit = lda(ratingTypeCate~userful + funny + cool + rating.y + review_count, data = finalExport)
+lda.fit
+***************************************************************************************************************************************
+chineseData = read.csv("/home/hadoop/test/biz-NY-chinese.csv", header=T);
+frenchData = read.csv("/home/hadoop/test/biz-NY-french.csv", header=T);
+combine1 = rbind(chineseData, frenchData);
+indpakData = read.csv("/home/hadoop/test/biz-NY-indpak-1.csv", header=T);
+combine2 = rbind(indpakData, combine1);
+italianData = read.csv("/home/hadoop/test/biz-NY-italian.csv", header=T);
+combine3 = rbind(italianData, combine2);
+japaneseData = read.csv("/home/hadoop/test/biz-NY-Japanese.csv", header=T);
+combine4 = rbind(japaneseData, combine3);
+koreanData = read.csv("/home/hadoop/test/biz-NY-korean.csv", header=T);
+combine5 = rbind(koreanData, combine4);
+mexicanData = read.csv("/home/hadoop/test/biz-NY-mexican.csv", header=T);
+combine5 = rbind(mexicanData, combine4);
+newamericanData = read.csv("/home/hadoop/test/biz-NY-newamerican.csv", header=T);
+combine6 = rbind(combine5, newamericanData);
+dataamericanData = read.csv("/home/hadoop/test/biz-NY-tradamerican.csv", header=T);
+combine7 = rbind(combine6, dataamericanData);
+nrow(combine7)
+reviewData = read.csv("/home/hadoop/test/reviewcopy.csv", head=T);
+
+testCombine = merge(reviewData, combine7, by.x=c("bizID"), by.y=c("bizID"));
+test0 = testCombine[-1];
+test1 = test0[-1];
+test2 = test1[-1];
+test3 = test2[-5];
+test4 = test3[-5];
+test4$ratingTypeCate = cut(test4$rating.x, c(0,2,5), labels=c(0:1));
+testFinal = test4[-1];
+
+//***************************************************************************************
+write.table(finalData0, file="yelpTest1.csv",sep="," );
+
+//*****************Random Forest Data Preprocessing*************************************
+
+RandomForestData$usefulCate = cut(RandomForestData$useful,c(0,2,86), labels = c(0,1));
+RandomForestData$usefulCate = cut(RandomForestData$useful,c(-1,2,86), labels = c(0,1));
+RandomForestData$funnyCate = cut(RandomForestData$funny, c(-1,2,75), labels = c(0,1));
+RandomForestData$coolCate = cut(RandomForestData$cool, c(-1,2,82), labels = c(0,1));
+RandomForestData$rating.yCate = cut(RandomForestData$rating.y, c(0, 2,5), labels = c(0,1));
+RandomForestData$review_countCate = cut(RandomForestData$review_count, c(0,253,2669), labels = c(0,1));
+RandomForestDataFinal = RandomForestData[,-c(1,2,3,4,5)];
+write.table(RandomForestDataFinal, file="yelp_random_forest_1.csv", sep=",");
+dataTest1 = read.csv("yelpRandom.csv", header = T);
+head(dataTest1)
+dataTest2 = dataTest1[sample(nrow(dataTest1)),];
+head(dataTest2)
+
+RandomForestTestSet = dataTest2[1:(201248*0.2),];
+dim(RandomForestTestSet)
+write.table(RandomForestTestSet, file="forestTest.csv", sep=",");
+RandomForestTrainSet = dataTest2[(201248*0.2+1):201244,];
+dim(RandomForestTrainSet)
+
+write.table(RandomForestTrainSet, file="forestTrain.csv", sep=",");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
